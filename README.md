@@ -15,7 +15,7 @@ Docker files are a form of containers that can run separate from your system, th
 Excited yet? Let's start off by installing docker to your system by following the following tutorial.
 From the tutorial, you should have done some sanity checks to make sure docker is properly set-up. Just in case, however, let's run the following command once again that uses the hello-world docker image:
 ```
-sudo docker run hello-world
+$ sudo docker run hello-world
 ```
 
 You should obtain the following output:
@@ -50,11 +50,11 @@ More detailed instructions on the use of ROS2 docker images can be found [here](
 Let's skip through that and get to real-deal right away; creating a local ROS2 docker. We'll create our own Dockerfile since we'll need this method for deployment on IBM Cloud. First, we create a new directory which will hold our Dockerfile and any other files we need later on and navigate to it. Using your favorite $EDITOR of choice, open a new file named *Dockerfile* (make sure the file naming is correct):
 
 ```
-mkdir ~/ros2_docker
+$ mkdir ~/ros2_docker
 
-cd ~/ros2_docker
+$ cd ~/ros2_docker
 
-$EDITOR Dockerfile
+$ $EDITOR Dockerfile
 ```
 
 Insert the following in the *Dockerfile*, and save it:
@@ -96,7 +96,7 @@ _0dc6ce7cb487_ will most probably be different for you, so keep note of it and c
 You can always go back and check the docker images you have using:
 
 ```
-sudo docker ps -as
+$ sudo docker ps -as
 ```
 
 Now, run the docker file using:

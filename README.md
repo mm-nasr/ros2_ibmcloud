@@ -44,7 +44,7 @@ For more examples and ideas, visit:
 
 ### b) ROS2 Image
 
-ROS [announced](https://discourse.ros.org/t/announcing-official-docker-images-for-ros2/7381/2) image containers for several ROS distributions in January 2019.
+ROS [announced](	https://discourse.ros.org/t/announcing-official-docker-images-for-ros2/7381/2) image containers for several ROS distributions in January 2019.
 More detailed instructions on the use of ROS2 docker images can be found [here](https://hub.docker.com/_/ros/).
 
 Let's skip through that and get to real-deal right away; creating a local ROS2 docker. We'll create our own Dockerfile since we'll need this method for deployment on IBM Cloud. First, we create a new directory which will hold our Dockerfile and any other files we need later on and navigate to it. Using your favorite $EDITOR of choice, open a new file named *Dockerfile* (make sure the file naming is correct):
@@ -122,3 +122,54 @@ $ docker run -it 0dc6ce7cb487
 ```
 
 If it works correctly, you should see something similar to what is shown above. As can be seen, there are two ROS nodes (a publisher and a subscriber) running and their output is provided to us.
+
+## Step 2: Running the image on IBM Cloud
+
+The following steps assume you have an IBM cloud account and have ibmcloud CLI installed. If not, please check this [link](https://cloud.ibm.com/docs/cli/reference/ibmcloud/download_cli.html#install_use) out to get that done first.
+
+In your terminal, login to your ibmcloud account:
+
+```
+$ ibmcloud login --sso
+```
+
+From here, let's create a container registry name-space. Make sure you use a unique name that is also descriptive as to what it is. Here, I used _ros2nasr_.
+
+
+```
+$ ibmcloud cr namespace-add ros2nasr
+``` 
+
+IBM cloud has a lot of shortcuts that would help us get our container onto the cloud right away. The command below builds the container and tags it with the name __ros2foxy__ and the version of __1__. Make sure you use the correct registry name you created and you are free to change the container name as you wish. The __.__ at the end indicates that the _Dockerfile_ is in the current directory, if not, change it to point to the directory containing the Dockerfile.
+
+```
+$ ibmcloud cr build --tag registry.bluemix.net/ros2nasr/ros2foxy:1 .
+```
+
+You can now make sure that the container has been pushed to the registry you created by running the following command
+
+```
+$ ibmcloud cr image-list
+Listing images...
+
+REPOSITORY               TAG   DIGEST         NAMESPACE   CREATED         SIZE     SECURITY STATUS
+us.icr.io/ros2nasr/ros2foxy   1     031be29301e6   ros2nasr    36 seconds ago   120 MB   No Issues
+
+OK
+```
+
+Next, it is important to log-in to your registry to run the docker image. Again, if you face a _permission denied_ error, perform the command with sudo previliges. Afterwards, run your docker file as shown below.
+
+```
+$ ibmcloud cr login
+Logging in to 'registry.ng.bluemix.net'...
+Logged in to 'registry.ng.bluemix.net'.
+Logging in to 'us.icr.io'...
+Logged in to 'us.icr.io'.
+
+OK
+
+$ docker run -v -it registry.ng.bluemix.net/ros2nasr/ros2foxy:1
+```
+
+You should now see your docker file running and providing similar output to that you saw when you ran it locally on your machine.

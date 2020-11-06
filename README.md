@@ -1,6 +1,6 @@
 # ROS2 on IBM Cloud
 
-This repository holds instructions on how to run ROS2 on IBM Cloud with your custom packages. It also holds sample files for illustration.
+In this tutorial, we show how you can easily integrate and run ROS2 on IBM Cloud with your custom packages.
 
 ROS2 is the new generation of ROS which gives more control over multi-robot formations. With the advancements of cloud computing, cloud robotics are becoming more important in today's age. In this tutorial, we will go through a short introduction on running ROS2 on IBM Cloud. By the end of the tutorial, you will be able to create your own packages in ROS2 and deploy them to the cloud using docker files. 
 
@@ -11,8 +11,11 @@ Before we go into how the exact process works, lets first make sure all the requ
 
 ### a) Docker files?
 
-Docker files are a form of containers that can run separate from your system, this way, you can set-up potentially hundreds of different projects without affecting one another. You can even set-up different versions of Linux on one machine, without the need for virtual machine. Docker files have an advantage of saving space and only utilizing your system resources when in use. In addition, dockers are versatile and transferable. They contain all the required pre-requisites to run separately, meaning that you can easily use a docker file for a specific system or service without any other setup!
-Excited yet? Let's start off by installing docker to your system by following the following tutorial.
+Docker files are a form of containers that can run separate from your system, this way, you can set-up potentially hundreds of different projects without affecting one another. You can even set-up different versions of Linux on one machine, without the need for virtual machine. 
+Docker files have an advantage of saving space and only utilizing your system resources when running. 
+In addition, dockers are versatile and transferable. They contain all the required pre-requisites to run separately, meaning that you can easily use a docker file for a specific system or service without any cubersome steps!
+
+Excited yet? Let's start off by installing docker to your system by following the following [link](https://docs.docker.com/get-docker/).
 From the tutorial, you should have done some sanity checks to make sure docker is properly set-up. Just in case, however, let's run the following command once again that uses the hello-world docker image:
 ```
 $ sudo docker run hello-world
@@ -44,10 +47,11 @@ For more examples and ideas, visit:
 
 ### b) ROS2 Image
 
-ROS [announced](	https://discourse.ros.org/t/announcing-official-docker-images-for-ros2/7381/2) image containers for several ROS distributions in January 2019.
+ROS [announced](https://discourse.ros.org/t/announcing-official-docker-images-for-ros2/7381/2) image containers for several ROS distributions in January 2019.
 More detailed instructions on the use of ROS2 docker images can be found [here](https://hub.docker.com/_/ros/).
 
-Let's skip through that and get to real-deal right away; creating a local ROS2 docker. We'll create our own Dockerfile since we'll need this method for deployment on IBM Cloud. First, we create a new directory which will hold our Dockerfile and any other files we need later on and navigate to it. Using your favorite $EDITOR of choice, open a new file named *Dockerfile* (make sure the file naming is correct):
+Let's skip through that and get to real-deal right away; creating a local ROS2 docker. We'll create our own Dockerfile (instead of using a ready Image) since we'll need this method for deployment on IBM Cloud. First, we create a new directory which will hold our Dockerfile and any other files we need later on and navigate to it. 
+Using your favorite $EDITOR of choice, open a new file named *Dockerfile* (make sure the file naming is correct):
 
 ```
 $ mkdir ~/ros2_docker
@@ -79,7 +83,8 @@ CMD ["ros2", "launch", "demo_nodes_cpp", "talker_listener.launch.py"]
 * __WORKDIR__: informs the container where the working directory should be for it
 
 Of course, you are free to change the ROS distribution (_foxy_ is used here) or change the directory name.
-The above docker file sets up ROS-foxy and installs the demo nodes for C++ and Python. Then it launches a file which runs a talker and a listener node. We will see it in action in just a few, but they act very similar to the publisher-subscriber example found in the [ROS wiki](https://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29)
+The above docker file sets up ROS-foxy and installs the demo nodes for C++ and Python. Then it launches a file which runs a talker and a listener node. 
+We will see it in action in just a few, but they act very similar to the publisher-subscriber example found in the [ROS wiki](https://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29)
 
 Now, we are ready to build the docker image to run ROS2 in it (yes, it is THAT easy!). 
 
@@ -93,7 +98,7 @@ Successfully built 0dc6ce7cb487
 ```
 
 _0dc6ce7cb487_ will most probably be different for you, so keep note of it and copy it somewhere for reference. 
-You can always go back and check the docker images you have using:
+You can always go back and check the docker images you have on your system using:
 
 ```
 $ sudo docker ps -as
@@ -121,13 +126,21 @@ $ docker run -it 0dc6ce7cb487
 [listener-2] [INFO] [1603852912.250212678] [listener]: I heard: [Hello World: 6]
 ```
 
-If it works correctly, you should see something similar to what is shown above. As can be seen, there are two ROS nodes (a publisher and a subscriber) running and their output is provided to us.
+If it works correctly, you should see something similar to what is shown above. 
+As can be seen, there are two ROS nodes (a publisher and a subscriber) running and their output is provided to us through ROS INFO.
 
 ## Step 2: Running the image on IBM Cloud
 
-The following steps assume you have an IBM cloud account and have ibmcloud CLI installed. If not, please check this [link](https://cloud.ibm.com/docs/cli/reference/ibmcloud/download_cli.html#install_use) out to get that done first.
+The following steps assume you have an IBM cloud account and have ibmcloud CLI installed. 
+If not, please check this [link](https://cloud.ibm.com/docs/cli/reference/ibmcloud/download_cli.html#install_use) out to get that done first.
 
-In your terminal, login to your ibmcloud account:
+We also need to make sure that the CLI plug-in for the IBM Cloud Container Registry is installed by running the command 
+
+```
+$ ibmcloud plugin install container-registry
+```
+
+Afterwards, login to your ibmcloud account through the terminal:
 
 ```
 $ ibmcloud login --sso
@@ -140,7 +153,10 @@ From here, let's create a container registry name-space. Make sure you use a uni
 $ ibmcloud cr namespace-add ros2nasr
 ``` 
 
-IBM cloud has a lot of shortcuts that would help us get our container onto the cloud right away. The command below builds the container and tags it with the name __ros2foxy__ and the version of __1__. Make sure you use the correct registry name you created and you are free to change the container name as you wish. The __.__ at the end indicates that the _Dockerfile_ is in the current directory, if not, change it to point to the directory containing the Dockerfile.
+IBM cloud has a lot of shortcuts that would help us get our container onto the cloud right away. 
+The command below builds the container and tags it with the name __ros2foxy__ and the version of __1__. 
+Make sure you use the correct registry name you created and you are free to change the container name as you wish. 
+The __.__ at the end indicates that the _Dockerfile_ is in the current directory (and it is important), if not, change it to point to the directory containing the Dockerfile.
 
 ```
 $ ibmcloud cr build --tag registry.bluemix.net/ros2nasr/ros2foxy:1 .
@@ -158,7 +174,8 @@ us.icr.io/ros2nasr/ros2foxy   1     031be29301e6   ros2nasr    36 seconds ago   
 OK
 ```
 
-Next, it is important to log-in to your registry to run the docker image. Again, if you face a _permission denied_ error, perform the command with sudo previliges. Afterwards, run your docker file as shown below.
+Next, it is important to log-in to your registry to run the docker image. 
+Again, if you face a _permission denied_ error, perform the command with sudo previliges. Afterwards, run your docker file as shown below.
 
 ```
 $ ibmcloud cr login
@@ -172,4 +189,175 @@ OK
 $ docker run -v -it registry.ng.bluemix.net/ros2nasr/ros2foxy:1
 ```
 
+Where _ros2nasr_ is the name of the registry you created and _ros2foxy:1_ is the tag of the docker container and the version as explained previously.
+
 You should now see your docker file running and providing similar output to that you saw when you ran it locally on your machine.
+
+
+
+## Using Custom ROS2 Packages
+
+So now we have the full pipeline working, from creating the Dockerfile, all the way to deploying it and seeing it work on IBM Cloud. But, what if we want to use a custom set of packages we (or someone else) created?
+
+Well that all has to do with how you set-up your Dockerfile. Lets use the example provided by ROS2 [here](https://hub.docker.com/_/ros/). Create a new directory with a new Dockerfile (or overwrite the existing one) and add the following in it
+
+```
+ARG FROM_IMAGE=ros:foxy
+ARG OVERLAY_WS=/opt/ros/overlay_ws
+
+# multi-stage for caching
+FROM $FROM_IMAGE AS cacher
+
+# clone overlay source
+ARG OVERLAY_WS
+WORKDIR $OVERLAY_WS/src
+RUN echo "\
+repositories: \n\
+  ros2/demos: \n\
+    type: git \n\
+    url: https://github.com/ros2/demos.git \n\
+    version: ${ROS_DISTRO} \n\
+" > ../overlay.repos
+RUN vcs import ./ < ../overlay.repos
+
+# copy manifests for caching
+WORKDIR /opt
+RUN mkdir -p /tmp/opt && \
+    find ./ -name "package.xml" | \
+      xargs cp --parents -t /tmp/opt && \
+    find ./ -name "COLCON_IGNORE" | \
+      xargs cp --parents -t /tmp/opt || true
+
+# multi-stage for building
+FROM $FROM_IMAGE AS builder
+
+# install overlay dependencies
+ARG OVERLAY_WS
+WORKDIR $OVERLAY_WS
+COPY --from=cacher /tmp/$OVERLAY_WS/src ./src
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
+    apt-get update && rosdep install -y \
+      --from-paths \
+        src/ros2/demos/demo_nodes_cpp \
+        src/ros2/demos/demo_nodes_py \
+      --ignore-src \
+    && rm -rf /var/lib/apt/lists/*
+
+# build overlay source
+COPY --from=cacher $OVERLAY_WS/src ./src
+ARG OVERLAY_MIXINS="release"
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
+    colcon build \
+      --packages-select \
+        demo_nodes_cpp \
+        demo_nodes_py \
+      --mixin $OVERLAY_MIXINS
+
+# source entrypoint setup
+ENV OVERLAY_WS $OVERLAY_WS
+RUN sed --in-place --expression \
+      '$isource "$OVERLAY_WS/install/setup.bash"' \
+      /ros_entrypoint.sh
+
+# run launch file
+CMD ["ros2", "launch", "demo_nodes_cpp", "talker_listener.launch.py"]
+```
+
+Going through the lines shown, we can see how we can add custom packages from github in 4 steps:
+
+1. Create an overlay with custom packages cloned from Github:
+
+```
+ARG OVERLAY_WS
+WORKDIR $OVERLAY_WS/src
+RUN echo "\
+repositories: \n\
+  ros2/demos: \n\
+    type: git \n\
+    url: https://github.com/ros2/demos.git \n\
+    version: ${ROS_DISTRO} \n\
+" > ../overlay.repos
+RUN vcs import ./ < ../overlay.repos
+```
+
+2. Install package dependencies using rosdep
+
+```
+# install overlay dependencies
+ARG OVERLAY_WS
+WORKDIR $OVERLAY_WS
+COPY --from=cacher /tmp/$OVERLAY_WS/src ./src
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
+    apt-get update && rosdep install -y \
+      --from-paths \
+        src/ros2/demos/demo_nodes_cpp \
+        src/ros2/demos/demo_nodes_py \
+      --ignore-src \
+    && rm -rf /var/lib/apt/lists/*
+
+```
+
+3. Build the packages _you need_
+
+```
+# build overlay source
+COPY --from=cacher $OVERLAY_WS/src ./src
+ARG OVERLAY_MIXINS="release"
+RUN . /opt/ros/$ROS_DISTRO/setup.sh && \
+    colcon build \
+      --packages-select \
+        demo_nodes_cpp \
+        demo_nodes_py \
+      --mixin $OVERLAY_MIXINS
+```
+
+4. Running the launch file
+
+```
+# run launch file
+CMD ["ros2", "launch", "demo_nodes_cpp", "talker_listener.launch.py"]
+```
+
+Likewise, we can change the packages used, install their dependencies, and then run them. 
+
+
+__Back to IBM Cloud__
+
+With this Dockerfile, we can follow the same steps we did before to deploy it on IBM Cloud. Since we already have our registry created, and we're logged in to IBM Cloud, we directly build our new Dockerfile. Notice how I kept the tag the same but changed the version, this way I can update the docker image created previously. (You are free to create a completely new one if you want)
+
+```
+$ ibmcloud cr build --tag registry.bluemix.net/ros2nasr/ros2foxy:2 .
+```
+
+Then, make sure you are logged in to the registry and run the new docker image:
+
+```
+$ ibmcloud cr login
+Logging in to 'registry.ng.bluemix.net'...
+Logged in to 'registry.ng.bluemix.net'.
+Logging in to 'us.icr.io'...
+Logged in to 'us.icr.io'.
+
+OK
+
+$ docker run -v -it registry.ng.bluemix.net/ros2nasr/ros2foxy:2
+```
+
+You should see, again, the same output. However, this time we did it through custom packages from github, which allows us to utilize our personally created packages for ROS2 on IBM Cloud.
+
+
+### Extra: Deleting Docker Images
+
+As you may find yourself in need of deleting a specific docker image(s) from IBM Cloud, this is how you should go about it!
+
+1. List all the images you have and find all the ones that share the _IMAGE_ name corresponding to _registry.ng.bluemix.net/ros2nasr/ros2foxy:2_ (in my case). Then delete them using their _NAMES_
+
+```
+$ docker rm your_docker_NAMES
+```
+
+2. Delete the docker image from IBM Cloud using its _IMAGE_ name
+
+```
+$ docker rmi registry.ng.bluemix.net/ros2nasr/ros2foxy:2
+```

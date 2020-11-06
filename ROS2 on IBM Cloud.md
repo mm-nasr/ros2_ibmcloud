@@ -1,4 +1,25 @@
-# ROS2 on IBM Cloud
+---
+layout: default
+title: ROS2 on IBM Cloud
+abstract:
+ 	This article describes how to get ROS2 running on IBM Cloud using Docker files. It first gives a brief overview of docker images and how they work locally and then explores IBM Cloud and how the user can deploy their containers on it. Afterwards, a short description of how the user can use their own custom packages for ROS2 from github on IBM Cloud is provided.
+ 	This is a multi-line abstract about this article. It should give a good overview about the contents of this article, the reason for writing it, and what the article delivers. The abstract is put in the "front-matter" of the document (YAML between the initial `---`'s) so that it can easily be reused elsewhere in the site.
+author: '[Mahmoud Nasr](https://github.com/mm-nasr)'
+published: false
+---
+
+- This will become a table of contents (this text will be scraped).
+{:toc}
+
+# {{ page.title }}
+
+<div class="abstract" markdown="1">
+{{ page.abstract }}
+</div>
+
+Original Author: {{ page.author }}
+
+## ROS2 on IBM Cloud
 
 In this tutorial, we show how you can easily integrate and run ROS2 on IBM Cloud with your custom packages.
 
@@ -6,10 +27,10 @@ ROS2 is the new generation of ROS which gives more control over multi-robot form
 
 The following instructions assume you're using Linux and have been tested with Ubuntu 18.04 (Bionic Beaver).
 
-## Step 1: Setting up your system
+### Step 1: Setting up your system
 Before we go into how the exact process works, lets first make sure all the required software is properly installed. We'll point you towards the appropriate sources to set up your system and only highlight the details that pertain to our use-case.
 
-### a) Docker files?
+#### a) Docker files?
 
 Docker files are a form of containers that can run separate from your system, this way, you can set-up potentially hundreds of different projects without affecting one another. You can even set-up different versions of Linux on one machine, without the need for virtual machine. 
 Docker files have an advantage of saving space and only utilizing your system resources when running. 
@@ -45,7 +66,7 @@ For more examples and ideas, visit:
  https://docs.docker.com/get-started/
 ```
 
-### b) ROS2 Image
+#### b) ROS2 Image
 
 ROS [announced](https://discourse.ros.org/t/announcing-official-docker-images-for-ros2/7381/2) image containers for several ROS distributions in January 2019.
 More detailed instructions on the use of ROS2 docker images can be found [here](https://hub.docker.com/_/ros/).
@@ -195,7 +216,7 @@ You should now see your docker file running and providing similar output to that
 
 
 
-## Step 3: Using Custom ROS2 Packages
+### Step 3: Using Custom ROS2 Packages
 
 So now we have the full pipeline working, from creating the Dockerfile, all the way to deploying it and seeing it work on IBM Cloud. But, what if we want to use a custom set of packages we (or someone else) created?
 
@@ -346,7 +367,7 @@ $ docker run -v -it registry.ng.bluemix.net/ros2nasr/ros2foxy:2
 You should see, again, the same output. However, this time we did it through custom packages from github, which allows us to utilize our personally created packages for ROS2 on IBM Cloud.
 
 
-### Extra: Deleting Docker Images
+#### Extra: Deleting Docker Images
 
 As you may find yourself in need of deleting a specific docker image(s) from IBM Cloud, this is how you should go about it!
 

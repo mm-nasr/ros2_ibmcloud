@@ -1,3 +1,7 @@
+<a href="ibmcloud"><img src="images/ibmcloud_logo.png" align="left" height="140" width="250" ></a>
+<a href="ROS2"><img src="images/ROS2_logo.png" align="center" height="140" width="140" ></a>
+
+
 # ROS2 on IBM Cloud
 
 In this tutorial, we show how you can easily integrate and run ROS2 on IBM Cloud with your custom packages.

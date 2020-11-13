@@ -462,3 +462,26 @@ deployment.apps/ros2-deployment created
 ```
 
 Now your docker image is fully deployed on your cluster!
+
+
+## Step 5: Using CLI for your Docker Image
+
+1. Navigate to your cluster through the IBM Cloud console Kubernetes.
+
+2. Click on _Kubernetes dashboard_ on the top right corner of the page.
+
+You should now be able to see a full list of all the different parameters of your cluster as well as its CPU and Memory Usage.
+
+3. Navigate to _Pods_ and click on your deployment.
+
+4. On the top right corner, click on _Exec into pod_ <a href="Exec"><img src="images/exec_icon.png" align="right" height="50" width="50" ></a>
+
+Now you are inside your docker image! You can source your workspace (if needed) and run ROS2! For example:
+
+```
+root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# . install/setup.sh
+root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# ros2 launch demo_nodes_cpp talker_listener.launch.py
+```
+
+The output is shown here:
+<a href="Kubernetes Output"><img src="images/kubernetes_ros2_run.png" align="center" height="450" width="900" >

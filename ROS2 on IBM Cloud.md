@@ -382,3 +382,124 @@ $ docker rm your_docker_NAMES
 ```
 $ docker rmi registry.ng.bluemix.net/ros2nasr/ros2foxy:2
 ```
+
+
+### Step 4: Kubernetes
+
+#### a) Creating the Cluster
+
+Create a cluster using the Console. The instructions are found [here](https://cloud.ibm.com/docs/containers?topic=containers-clusters#clusters_ui). The settings used are detailed below. These are merely suggestions and can be changed if you need to. However, make sure you understand the implications of your choices:
+
+1. Plan: _Standard_
+
+2. Orchestration Service: _Kubernetes v1.18.10_
+
+3. Infrastructure: _Classic_
+
+4. Location:
+  
+  * Resource group: _Default_
+
+  * Geography: _North America_ (you are free to change this)
+
+  * Availability: _Single zone_ (you are free to change this but make sure you understand the impact of your choices by checking the IBM Cloud documentation.)
+
+  * Worker Zone: _Toronto 01_ (choose the location that is physically closest to you)
+
+5. Worker Pool:
+
+  * Virtual - shared, Ubuntu 18
+
+  * Memory: 16 GB
+
+  * Worker nodes per zone: _1_ 
+
+6. Master service endpoint: _Both private & public endpoints_
+
+7. Resource details (Totally flexible):
+
+  * Cluster name: _mycluster-tor01-rosibm_
+
+  * Tags: _version:1_
+
+
+After you create your cluster, you will be redirected to a page which details how you can set up the CLI tools and access your cluster. Please follow these instructions (or check the instructions [here](https://github.com/mm-nasr/ros2_ibmcloud/Kubernetes-Cluster-Set-Up.md))and wait for the progress bar to show that the worker nodes you created are ready by indicating _Normal_ next to the cluster name. You can also reach this screen from the IBM Cloud Console inside the Kubernetes. 
+
+
+#### b) Deploying your Docker Image _Finally!_
+
+1. Create a deployment configuration yaml file named _ros2-deployment.yaml_ using your favorite $EDITOR and insert the following in it:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <deployment>
+spec:
+  replicas: <number_of_replicas>
+  selector:
+    matchLabels:
+      app: <app_name>
+  template:
+    metadata:
+      labels:
+        app: <app_name>
+    spec:
+      containers:
+      - name: <app_name>
+        image: <region>.icr.io/<namespace>/<image>:<tag>
+```
+
+You should replace the tags shown between _"<" ">"_ as described [here](https://cloud.ibm.com/docs/containers?topic=containers-images#namespace). The file in my case would look something like this:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ros2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ros2-ibmcloud
+  template:
+    metadata:
+      labels:
+        app: ros2-ibmcloud
+    spec:
+      containers:
+      - name: ros2-ibmcloud
+        image: us.icr.io/ros2nasr/ros2foxy:2
+```
+
+Deploy the file using the following command
+
+```
+$ kubectl apply -f ros2-deployment.yaml
+deployment.apps/ros2-deployment created
+```
+
+Now your docker image is fully deployed on your cluster!
+
+
+### Step 5: Using CLI for your Docker Image
+
+1. Navigate to your cluster through the IBM Cloud console Kubernetes.
+
+2. Click on _Kubernetes dashboard_ on the top right corner of the page.
+
+You should now be able to see a full list of all the different parameters of your cluster as well as its CPU and Memory Usage.
+
+3. Navigate to _Pods_ and click on your deployment.
+
+4. On the top right corner, click on _Exec into pod_ ![exec_icon](images/exec_icon.png)
+
+Now you are inside your docker image! You can source your workspace (if needed) and run ROS2! For example:
+
+```
+root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# . install/setup.sh
+root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# ros2 launch demo_nodes_cpp talker_listener.launch.py
+```
+
+The output is shown here:
+<a href="Kubernetes Output"><img src="images/kubernetes_ros2_run.png" align="center" height="450" width="900" >

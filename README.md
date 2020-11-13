@@ -474,7 +474,7 @@ You should now be able to see a full list of all the different parameters of you
 
 3. Navigate to _Pods_ and click on your deployment.
 
-4. On the top right corner, click on _Exec into pod_ <a href="Exec"><img src="images/exec_icon.png" align="right" height="50" width="50" ></a>
+4. On the top right corner, click on _Exec into pod_ ![exec_icon](images/exec_icon.png)
 
 Now you are inside your docker image! You can source your workspace (if needed) and run ROS2! For example:
 

@@ -365,3 +365,48 @@ $ docker rm your_docker_NAMES
 ```
 $ docker rmi registry.ng.bluemix.net/ros2nasr/ros2foxy:2
 ```
+
+## Step 4: Kubernetes
+
+### a) Creating the Cluster
+
+Create a cluster using the Console. The instructions are found [here](https://cloud.ibm.com/docs/containers?topic=containers-clusters#clusters_ui). The settings used are detailed below. These are merely suggestions and can be changed if you need to. However, make sure you understand the implications of your choices:
+
+1. Plan: _Standard_
+
+2. Orchestration Service: _Kubernetes v1.18.10_
+
+3. Infrastructure: _Classic_
+
+4. Location:
+  
+  * Resource group: _Default_
+
+  * Geography: _North America_ (you are free to change this)
+
+  * Availability: _Single zone_ (you are free to change this but make sure you understand the impact of your choices by checking the IBM Cloud documentation.)
+
+  * Worker Zone: _Toronto 01_ (choose the location that is physically closest to you)
+
+5. Worker Pool:
+
+  * Virtual - shared, Ubuntu 18
+
+  * Memory: 16 GB
+
+  * Worker nodes per zone: _1_ 
+
+6. Master service endpoint: _Both private & public endpoints_
+
+7. Resource details (Totally flexible):
+
+  * Cluster name: _mycluster-tor01-rosibm_
+
+  * Tags: _version:1_
+
+
+After you create your cluster, you will be redirected to a page which details how you can set up the CLI tools and access your cluster. Please follow these instructions (or check the instructions [here](https://github.com/mm-nasr/ros2_ibmcloud/Kubernetes Cluster Set Up.md))and wait for the progress bar to show that the worker nodes you created are ready by indicating _Normal_ next to the cluster name. You can also reach this screen from the IBM Cloud Console inside the Kubernetes. 
+
+
+### b) Deploying your Docker Image _Finally!_
+

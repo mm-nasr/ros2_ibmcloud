@@ -1,0 +1,17 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ros2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ros2-ibmcloud
+  template:
+    metadata:
+      labels:
+        app: ros2-ibmcloud
+    spec:
+      containers:
+      - name: ros2-ibmcloud
+        image: us.icr.io/jjnasr/ros2foxy:2

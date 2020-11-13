@@ -405,8 +405,60 @@ Create a cluster using the Console. The instructions are found [here](https://cl
   * Tags: _version:1_
 
 
-After you create your cluster, you will be redirected to a page which details how you can set up the CLI tools and access your cluster. Please follow these instructions (or check the instructions [here](https://github.com/mm-nasr/ros2_ibmcloud/Kubernetes Cluster Set Up.md))and wait for the progress bar to show that the worker nodes you created are ready by indicating _Normal_ next to the cluster name. You can also reach this screen from the IBM Cloud Console inside the Kubernetes. 
+After you create your cluster, you will be redirected to a page which details how you can set up the CLI tools and access your cluster. Please follow these instructions (or check the instructions [here](https://github.com/mm-nasr/ros2_ibmcloud/Kubernetes-Cluster-Set-Up.md))and wait for the progress bar to show that the worker nodes you created are ready by indicating _Normal_ next to the cluster name. You can also reach this screen from the IBM Cloud Console inside the Kubernetes. 
 
 
 ### b) Deploying your Docker Image _Finally!_
 
+1. Create a deployment configuration yaml file named _ros2-deployment.yaml_ using your favorite $EDITOR and insert the following in it:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <deployment>
+spec:
+  replicas: <number_of_replicas>
+  selector:
+    matchLabels:
+      app: <app_name>
+  template:
+    metadata:
+      labels:
+        app: <app_name>
+    spec:
+      containers:
+      - name: <app_name>
+        image: <region>.icr.io/<namespace>/<image>:<tag>
+```
+
+You should replace the tags shown between _"<" ">"_ as described [here](https://cloud.ibm.com/docs/containers?topic=containers-images#namespace). The file in my case would look something like this:
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ros2-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ros2-ibmcloud
+  template:
+    metadata:
+      labels:
+        app: ros2-ibmcloud
+    spec:
+      containers:
+      - name: ros2-ibmcloud
+        image: us.icr.io/ros2nasr/ros2foxy:2
+```
+
+Deploy the file using the following command
+
+```
+$ kubectl apply -f ros2-deployment.yaml
+deployment.apps/ros2-deployment created
+```
+
+Now your docker image is fully deployed on your cluster!

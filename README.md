@@ -6,7 +6,7 @@
 
 In this tutorial, we show how you can easily integrate and run ROS2 on IBM Cloud with your custom packages.
 
-ROS2 is the new generation of ROS which gives more control over multi-robot formations. With the advancements of cloud computing, cloud robotics are becoming more important in today's age. In this tutorial, we will go through a short introduction on running ROS2 on IBM Cloud. By the end of the tutorial, you will be able to create your own packages in ROS2 and deploy them to the cloud using docker files. 
+ROS2 is the new generation of ROS which gives more control over multi-robot formations, more secure connections, and an overall more structured robotics environment. With the advancements of cloud computing, cloud robotics are becoming more important in today's age. In this tutorial, we will go through a short introduction on running ROS2 on IBM Cloud. By the end of the tutorial, you will be able to create your own packages in ROS2 and deploy them to the cloud using docker files. 
 
 The following instructions assume you're using Linux and have been tested with Ubuntu 18.04 (Bionic Beaver).
 
@@ -485,3 +485,6 @@ root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# ros2 launch demo_nodes_cpp ta
 
 The output is shown here:
 <a href="Kubernetes Output"><img src="images/kubernetes_ros2_run.png" align="center" height="450" width="900" >
+ 
+## Final Remarks
+At this point, you are capable of creating your own docker image using ROS2 packages on github. It is also possible, with little changes to utilize local ROS2 packages as well. This could be the topic of another article. However, you are encouraged to check out the following [Dockerfile](https://github.com/mm-nasr/ros2_ibmcloud/tree/main/dockers/local_pkgs_docker) which uses a local copy of the demos repository. Similarly, you can use your own local package.

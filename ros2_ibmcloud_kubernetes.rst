@@ -33,7 +33,7 @@ The following instructions assume you're using Linux and have been
 tested with Ubuntu 18.04 (Bionic Beaver).
 
 Step 1: Setting up your system
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-------------------------------
 
 Before we go into how the exact process works, lets first make sure all
 the required software is properly installed. We'll point you towards the
@@ -59,13 +59,13 @@ From the tutorial, you should have done some sanity checks to make sure
 docker is properly set-up. Just in case, however, let's run the
 following command once again that uses the hello-world docker image:
 
-::
+.. code-block:: bash
 
    $ sudo docker run hello-world
 
 You should obtain the following output:
 
-::
+.. code-block:: bash
 
    Hello from Docker!
    This message shows that your installation appears to be working correctly.
@@ -105,7 +105,7 @@ other files we need later on and navigate to it. Using your favorite
 $EDITOR of choice, open a new file named *Dockerfile* (make sure the
 file naming is correct):
 
-::
+.. code-block:: bash
 
    $ mkdir ~/ros2_docker
 
@@ -116,7 +116,7 @@ file naming is correct):
 Insert the following in the *Dockerfile*, and save it (also found
 `here <https://github.com/mm-nasr/ros2_ibmcloud/blob/main/dockers/ros2_basic/Dockerfile>`__):
 
-::
+.. code-block:: bash
 
    FROM ros:foxy
 
@@ -151,7 +151,7 @@ is THAT easy!).
 **Note**: if you have errors due to insufficient privileges or
 *permission denied*, try running the command with *sudo* privileges:
 
-::
+.. code-block:: bash
 
    $ docker build .
 
@@ -162,13 +162,13 @@ is THAT easy!).
 it and copy it somewhere for reference. You can always go back and check
 the docker images you have on your system using:
 
-::
+.. code-block:: bash
 
    $ sudo docker ps -as
 
 Now, run the docker file using:
 
-::
+.. code-block:: bash
 
    $ docker run -it 0dc6ce7cb487
    [INFO] [launch]: All log files can be found below /root/.ros/log/2020-10-28-02-41-45-177546-0b5d9ed123be-1
@@ -203,13 +203,13 @@ out to get that done first.
 We also need to make sure that the CLI plug-in for the IBM Cloud
 Container Registry is installed by running the command
 
-::
+.. code-block:: bash
 
    $ ibmcloud plugin install container-registry
 
 Afterwards, login to your ibmcloud account through the terminal:
 
-::
+.. code-block:: bash
 
    $ ibmcloud login --sso
 
@@ -217,7 +217,7 @@ From here, let's create a container registry name-space. Make sure you
 use a unique name that is also descriptive as to what it is. Here, I
 used *ros2nasr*.
 
-::
+.. code-block:: bash
 
    $ ibmcloud cr namespace-add ros2nasr
 
@@ -229,14 +229,14 @@ the container name as you wish. The **.** at the end indicates that the
 *Dockerfile* is in the current directory (and it is important), if not,
 change it to point to the directory containing the Dockerfile.
 
-::
+.. code-block:: bash
 
    $ ibmcloud cr build --tag registry.bluemix.net/ros2nasr/ros2foxy:1 .
 
 You can now make sure that the container has been pushed to the registry
 you created by running the following command
 
-::
+.. code-block:: bash
 
    $ ibmcloud cr image-list
    Listing images...
@@ -251,7 +251,7 @@ image. Again, if you face a *permission denied* error, perform the
 command with sudo previliges. Afterwards, run your docker file as shown
 below.
 
-::
+.. code-block:: bash
 
    $ ibmcloud cr login
    Logging in to 'registry.ng.bluemix.net'...
@@ -283,7 +283,7 @@ Create a new directory with a new Dockerfile (or overwrite the existing
 one) and add the following in it (or download the file
 `here <https://github.com/mm-nasr/ros2_ibmcloud/blob/main/dockers/git_pkgs_docker/Dockerfile>`__)
 
-::
+.. code-block:: bash
 
    ARG FROM_IMAGE=ros:foxy
    ARG OVERLAY_WS=/opt/ros/overlay_ws
@@ -350,7 +350,7 @@ from github in 4 steps:
 
 1. Create an overlay with custom packages cloned from Github:
 
-::
+.. code-block:: bash
 
    ARG OVERLAY_WS
    WORKDIR $OVERLAY_WS/src
@@ -365,7 +365,7 @@ from github in 4 steps:
 
 2. Install package dependencies using rosdep
 
-::
+.. code-block:: bash
 
    # install overlay dependencies
    ARG OVERLAY_WS
@@ -381,7 +381,7 @@ from github in 4 steps:
 
 3. Build the packages *you need*
 
-::
+.. code-block:: bash
 
    # build overlay source
    COPY --from=cacher $OVERLAY_WS/src ./src
@@ -395,7 +395,7 @@ from github in 4 steps:
 
 4. Running the launch file
 
-::
+.. code-block:: bash
 
    # run launch file
    CMD ["ros2", "launch", "demo_nodes_cpp", "talker_listener.launch.py"]
@@ -412,14 +412,14 @@ Notice how I kept the tag the same but changed the version, this way I
 can update the docker image created previously. (You are free to create
 a completely new one if you want)
 
-::
+.. code-block:: bash
 
    $ ibmcloud cr build --tag registry.bluemix.net/ros2nasr/ros2foxy:2 .
 
 Then, make sure you are logged in to the registry and run the new docker
 image:
 
-::
+.. code-block:: bash
 
    $ ibmcloud cr login
    Logging in to 'registry.ng.bluemix.net'...
@@ -446,13 +446,13 @@ from IBM Cloud, this is how you should go about it!
    *registry.ng.bluemix.net/ros2nasr/ros2foxy:2* (in my case). Then
    delete them using their *NAMES*
 
-::
+.. code-block:: bash
 
    $ docker rm your_docker_NAMES
 
 2. Delete the docker image from IBM Cloud using its *IMAGE* name
 
-::
+.. code-block:: bash
 
    $ docker rmi registry.ng.bluemix.net/ros2nasr/ros2foxy:2
 
@@ -518,7 +518,7 @@ b) Deploying your Docker Image *Finally!*
    *ros2-deployment.yaml* using your favorite $EDITOR and insert the
    following in it:
 
-::
+.. code-block:: bash
 
    apiVersion: apps/v1
    kind: Deployment
@@ -542,7 +542,7 @@ You should replace the tags shown between *"<" ">"* as described
 `here <https://cloud.ibm.com/docs/containers?topic=containers-images#namespace>`__.
 The file in my case would look something like this:
 
-::
+.. code-block:: bash
 
    apiVersion: apps/v1
    kind: Deployment
@@ -564,7 +564,7 @@ The file in my case would look something like this:
 
 Deploy the file using the following command
 
-::
+.. code-block:: bash
 
    $ kubectl apply -f ros2-deployment.yaml
    deployment.apps/ros2-deployment created
@@ -583,16 +583,17 @@ parameters of your cluster as well as its CPU and Memory Usage.
 
 3. Navigate to *Pods* and click on your deployment.
 
-4. On the top right corner, click on *Exec into pod* |exec_icon|
+4. On the top right corner, click on *Exec into pod*
 
 Now you are inside your docker image! You can source your workspace (if
 needed) and run ROS2! For example:
 
-::
+.. code-block:: bash
 
    root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# . install/setup.sh
    root@ros2-deployment-xxxxxxxx:/opt/ros/overlay_ws# ros2 launch demo_nodes_cpp talker_listener.launch.py
 
-The output is shown here:
+Final Remarks
+---------------
 
-.. |exec_icon| image:: images/exec_icon.png
+At this point, you are capable of creating your own docker image using ROS2 packages on github. It is also possible, with little changes to utilize local ROS2 packages as well. This could be the topic of another article. However, you are encouraged to check out the following `Dockerfile <https://github.com/mm-nasr/ros2_ibmcloud/tree/main/dockers/local_pkgs_docker>`__ which uses a local copy of the demos repository. Similarly, you can use your own local package.

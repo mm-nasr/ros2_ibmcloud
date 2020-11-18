@@ -271,7 +271,7 @@ You should now see your docker file running and providing similar output
 to that you saw when you ran it locally on your machine.
 
 Step 3: Using Custom ROS2 Packages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+------------------------------------
 
 So now we have the full pipeline working, from creating the Dockerfile,
 all the way to deploying it and seeing it work on IBM Cloud. But, what
@@ -457,7 +457,7 @@ from IBM Cloud, this is how you should go about it!
    $ docker rmi registry.ng.bluemix.net/ros2nasr/ros2foxy:2
 
 Step 4: Kubernetes
-~~~~~~~~~~~~~~~~~~
+-------------------
 
 a) Creating the Cluster
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -572,7 +572,7 @@ Deploy the file using the following command
 Now your docker image is fully deployed on your cluster!
 
 Step 5: Using CLI for your Docker Image
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+---------------------------------------
 
 1. Navigate to your cluster through the IBM Cloud console Kubernetes.
 
